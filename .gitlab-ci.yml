@@ -1,0 +1,116 @@
+stages:
+  - version
+  - build
+  - commit
+  - deploy
+
+version:
+  stage: version
+  script:
+    - VERSION=`cat version`
+    - |
+      if [ -n "$CI_COMMIT_TAG" ]; then
+        echo "TAG=$CI_COMMIT_TAG" > build.env
+        BUMP_TYPE=major
+      elif [ "$CI_COMMIT_BRANCH" == "$CI_DEFAULT_BRANCH" ]; then
+        echo "TAG=latest" > build.env
+        BUMP_TYPE=minor
+      else
+        echo "TAG=$CI_COMMIT_BRANCH" > build.env
+        BUMP_TYPE=patch
+      fi
+    - echo "BUMP_TYPE=$BUMP_TYPE" >> build.env
+    - python3 -m semver bump $BUMP_TYPE $VERSION > version
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      when: never
+    - if: "$CI_COMMIT_REF_NAME"
+    - if: "$CI_COMMIT_TAG"
+      when: always
+
+  artifacts:
+    paths:
+      - version
+  tags:
+    - shell
+
+build:
+  stage: build
+  image: python:alpine
+  before_script:
+    - apk update && apk add --no-cache make protobuf-dev protobuf-c-compiler curl zip
+    - pip install -r requirements.txt
+  script:
+    - VERSION=`cat version`
+    - echo "Building version $VERSION"
+    - sed -i 's/version = "[^"]*"/version = "'$VERSION'"/' pyproject.toml
+    - python generate.py
+    - ZIPFILE=${CI_PROJECT_NAME}-$VERSION.zip
+    - ls -la
+    - zip -r ${ZIPFILE} chirpstack_api
+    - poetry build
+    - ls -la
+    - |
+      if [ -n "$CI_COMMIT_TAG" ]; then
+        curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file ${ZIPFILE} "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/${CI_PROJECT_NAME}/$VERSION/${CI_PROJECT_NAME}-stable.zip"
+        curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file dist/*.whl "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/${CI_PROJECT_NAME}/$VERSION/${CI_PROJECT_NAME}-stable.whl"
+        curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file dist/*.tar.gz "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/${CI_PROJECT_NAME}/$VERSION/${CI_PROJECT_NAME}-stable.tar.gz"
+      else
+        curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file ${ZIPFILE} "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/${CI_PROJECT_NAME}/$VERSION/${CI_PROJECT_NAME}-latest.zip"
+        curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file dist/*.whl "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/${CI_PROJECT_NAME}/$VERSION/${CI_PROJECT_NAME}-latest.whl"
+        curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file dist/*.tar.gz "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/${CI_PROJECT_NAME}/$VERSION/${CI_PROJECT_NAME}-latest.tar.gz"
+      fi
+  tags:
+    - docker
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      when: never
+    - if: "$CI_COMMIT_REF_NAME"
+    - if: "$CI_COMMIT_TAG"
+      when: always
+
+git-commit:
+  stage: commit
+  script:
+    - echo "Commiting new version to git"
+    - echo "TAG=$TAG"
+    - echo "BUMP_TYPE=$BUMP_TYPE"
+    - git config --global user.email "ci-bot@ao-inc.com"
+    - git config --global user.name "ci-bot"
+    - git config --global credential.helper store
+    - git fetch origin
+    - git branch -D ${CI_COMMIT_REF_NAME} || true
+    - git checkout -b ${CI_COMMIT_REF_NAME} origin/${CI_COMMIT_REF_NAME}
+    - git add version
+    - git add pyproject.toml
+    - git commit -m "CI updated version [skip ci]"
+    - git remote set-url origin https://GITLAB_TOKEN:${GITLAB_TOKEN}@${CI_SERVER_HOST}/${CI_PROJECT_PATH}.git
+    - echo https://GITLAB_TOKEN:${GITLAB_TOKEN}@${CI_SERVER_HOST}/${CI_PROJECT_PATH}.git
+    - git push origin ${CI_COMMIT_REF_NAME}
+  tags:
+    - shell
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      when: never
+    - if: "$CI_COMMIT_REF_NAME"
+    - if: "$CI_COMMIT_TAG"
+      when: always
+
+pages:
+  stage: deploy
+  script:
+    - echo "Deploying Pages"
+    - VERSION=$(cat version)
+    - mkdir -p public
+    - curl -o public/version.svg "https://img.shields.io/badge/version-$VERSION-blue.svg"
+  artifacts:
+    paths:
+      - public
+  tags:
+    - shell
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      when: never
+    - if: "$CI_COMMIT_REF_NAME"
+    - if: "$CI_COMMIT_TAG"
+      when: always

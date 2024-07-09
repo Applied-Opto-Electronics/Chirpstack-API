@@ -1,0 +1,390 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# PyInstaller
+#  Usually these files are written by a python script from a template
+#  before PyInstaller builds the exe, so as to inject date/other infos into it.
+*.manifest
+*.spec
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+
+# Translations
+*.mo
+*.pot
+
+# Django stuff:
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+
+# Flask stuff:
+instance/
+.webassets-cache
+
+# Scrapy stuff:
+.scrapy
+
+# Sphinx documentation
+docs/_build/
+
+# PyBuilder
+.pybuilder/
+target/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# IPython
+profile_default/
+ipython_config.py
+
+# pyenv
+.python-version
+
+# pipenv
+#   According to pypa/pipenv#598, it is recommended to include Pipfile.lock in version control.
+#   However, in case of collaboration, if having platform-specific dependencies or dependencies
+#   having no cross-platform support, pipenv may install dependencies that don't work, or not
+#   install all needed dependencies.
+#Pipfile.lock
+
+# PEP 582; used by e.g. github.com/David-OConnor/pyflow
+__pypackages__/
+
+# Celery stuff
+celerybeat-schedule
+celerybeat.pid
+
+# SageMath parsed files
+*.sage.py
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Spyder project settings
+.spyderproject
+.spyproject
+
+# Rope project settings
+.ropeproject
+
+# mkdocs documentation
+/site
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Pyre type checker
+.pyre/
+
+# pytype static type analyzer
+.pytype/
+
+# Cython debug symbols
+cython_debug/
+
+# PyCharm
+#  https://www.jetbrains.com/help/pycharm/project-and-ide-settings.html
+#  https://www.jetbrains.com/help/pycharm/tuning-the-ide.html#cfg-directory
+.idea/
+*.iml
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# vscode
+.vscode/
+
+# pytest related
+.coverage
+.cache
+nosetests.xml
+coverage.xml
+
+# pytest cache
+.pytest_cache/
+
+# flake8
+.flake8
+
+# isort
+.isort.cfg
+.isort.py
+.pyre/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# Haskell
+.stack-work/
+
+# Idris
+.idris/
+
+# Merlin
+.merlin
+
+# OmniSharp
+.omnisharp/
+
+# .NET
+*.sln
+*.csproj
+*.fsproj
+*.xproj
+
+# Azure Devops artifacts
+*.buildId
+
+# MythX
+.mythx/
+
+# Npm/Yarn
+node_modules/
+package-lock.json
+npm-debug.log*
+yarn-error.log
+
+# CDK
+cdk.out/
+
+# Maven
+target/
+
+# Gradle
+.gradle/
+
+# SBT
+target/
+
+# Spatial OS
+.spatialos/
+
+# Expo
+node_modules/
+
+# .NET
+.vscode/
+
+# .NET
+*.sln
+*.csproj
+*.fsproj
+*.xproj
+
+# .NET Core
+project.json
+
+# NuGet
+bin/
+obj/
+
+# Jetbrains
+.idea/
+*.iws
+*.iml
+
+# VSCode
+.vscode/
+
+# Rider
+.idea/
+*.iws
+*.iml
+
+# .NET
+*.csproj.user
+*.sln.docstates
+
+# .NET
+*.suo
+*.user
+*.userprefs
+
+# Build Results
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+bld/
+[Bb]uild/
+[Dd]ebugging/
+[Dd]ebugger/
+[Oo]bj/
+[Oo]ut/
+[Bb]in/
+[Bb]uilds/
+[Dd]ist/
+
+# CMAKE
+cmake-build-*/
+CMakeCache.txt
+CMakeFiles/
+CMakeScripts/
+cmake_install.cmake
+
+# Go
+/pkg/
+/src/pkg/
+/vendor/
+/_obj/
+
+# C/C++
+/build/
+/bmk
+/.deps
+/deps/
+/include/
+/lib/
+/src/config/
+/src/compiler/
+/src/gcc/
+/src/include/
+/src/lib/
+/src/libgcc/
+/src/libstdc++-v3/
+/src/rts/
+/src/rtl/
+/src/sfio/
+/src/std/
+/src/xruntimesrc/
+/src/xruntimesrc-4.2.4/
+/src/xruntimesrc-4.3.0/
+/src/xruntimesrc-4.4.0/
+
+# Ruby
+/vendor/bundle/
+.bundle/
+/vendor/ruby/
+/vendor/jruby/
+/vendor/krb5/
+/bundle/
+/gems/
+.sass-cache
+.gembag
+
+# Bundler
+/vendor/bundle/
+/bundle/
+/gemfiles/
+/gemsets/
+/gems/
+.bundle/
+.bundler/
+
+# Go
+/vendor/
+
+# Gradle
+.gradle/
+/build/
+/target/
+
+# Flutter
+/android/.pub-cache/
+/build/
+/ios/Pods/
+/.pub-cache/
+/.pub-lockfile
+
+# Intellij
+/out/
+
+# VSCode
+.vscode/
+
+# Pants
+/dist/
+/gen-src/
+/.pants.d/
+
+# Maven
+/target/
+
+# Gradle
+/build/
+/gradle/
+
+# Eclipse
+/.classpath
+/.project
+/nbproject/
+
+# NetBeans
+/nbbuild/
+/nbproject/private/
+/.nb-gradle/
+
+# IntelliJ IDEA
+/out/
+/.idea/
+*.iml
+*.ipr
+*.iws
+.idea/modules.xml
+
+# The EPEL repository
+epel/
+
+# The 'enhancements' repository
+enhancements/
+
+# The 'updates' repository
+updates/
+
+# The 'addons' repository
+addons/
+
+chirpstack_api/
