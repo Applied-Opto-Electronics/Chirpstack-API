@@ -55,10 +55,12 @@ build:
         curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file ${ZIPFILE} "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/${CI_PROJECT_NAME}/$VERSION/${CI_PROJECT_NAME}-stable.zip"
         curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file dist/*.whl "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/${CI_PROJECT_NAME}/$VERSION/${CI_PROJECT_NAME}-stable.whl"
         curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file dist/*.tar.gz "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/${CI_PROJECT_NAME}/$VERSION/${CI_PROJECT_NAME}-stable.tar.gz"
+        curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file dist/*.tar.gz "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/${CI_PROJECT_NAME}/stable/${CI_PROJECT_NAME}.tar.gz"
       else
         curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file ${ZIPFILE} "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/${CI_PROJECT_NAME}/$VERSION/${CI_PROJECT_NAME}-latest.zip"
         curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file dist/*.whl "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/${CI_PROJECT_NAME}/$VERSION/${CI_PROJECT_NAME}-latest.whl"
         curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file dist/*.tar.gz "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/${CI_PROJECT_NAME}/$VERSION/${CI_PROJECT_NAME}-latest.tar.gz"
+        curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file dist/*.tar.gz "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/${CI_PROJECT_NAME}/latest/${CI_PROJECT_NAME}.tar.gz"
       fi
   tags:
     - docker
