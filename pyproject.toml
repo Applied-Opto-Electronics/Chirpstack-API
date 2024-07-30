@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "chirpstack-api"
-version = "0.1.0"
+version = ""
 description = ""
 authors = []
 readme = "README.md"

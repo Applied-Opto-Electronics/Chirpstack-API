@@ -84,7 +84,7 @@ git-commit:
     - git branch -D ${CI_COMMIT_REF_NAME} || true
     - git checkout -b ${CI_COMMIT_REF_NAME} origin/${CI_COMMIT_REF_NAME}
     - git add version
-    - git add pyproject.toml
+    # - git add pyproject.toml
     - git commit -m "CI updated version [skip ci]"
     - git remote set-url origin https://GITLAB_TOKEN:${GITLAB_TOKEN}@${CI_SERVER_HOST}/${CI_PROJECT_PATH}.git
     - echo https://GITLAB_TOKEN:${GITLAB_TOKEN}@${CI_SERVER_HOST}/${CI_PROJECT_PATH}.git
