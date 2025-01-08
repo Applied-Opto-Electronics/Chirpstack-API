@@ -60,21 +60,22 @@ jobs:
 
       - name: Build Project
         run: |
-          VERSION=$(cat version)
-          echo "Building version $VERSION"
-          sed -i 's/version = "[^"]*"/version = "'$VERSION'"/' pyproject.toml
-          python generate.py
-          ZIPFILE=${{ github.event.repository.name }}-$VERSION.zip
-          ls -la
-          zip -r ${ZIPFILE} chirpstack_api
-          poetry build
-          ls -la
+            VERSION=$(cat version)
+            echo "Building version $VERSION"
+            sed -i 's/version = "[^"]*"/version = "'$VERSION'"/' pyproject.toml
+            python generate.py
+            TARFILE=${{ github.event.repository.name }}-$VERSION.tar.gz
+            echo "Creating $TARFILE"
+            tar -czvf $TARFILE chirpstack_api/
+            poetry build
+            ls -la
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v3
         with:
             name: chirpstack-api-${{ github.event.repository.name }}-${{ github.event_name == 'push' && github.ref_type != 'tag' && 'latest' || 'stable' }}
-            path: Chirpstack-API-*.zip
+            path: chirpstack-api-*.tar.gz
+
 
 
 #   commit:
