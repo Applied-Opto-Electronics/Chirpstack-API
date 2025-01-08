@@ -70,37 +70,42 @@ jobs:
           poetry build
           ls -la
 
-      - name: Upload to GitHub Packages
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          VERSION=$(cat version)
-          ZIPFILE=${{ github.event.repository.name }}-$VERSION.zip
-          if [[ $GITHUB_REF_TYPE == "tag" ]]; then
-            curl --header "Authorization: Bearer $GITHUB_TOKEN" \
-              --upload-file ${ZIPFILE} \
-              "https://uploads.github.com/repos/${{ github.repository }}/releases/$VERSION/assets?name=${{ github.event.repository.name }}-stable.zip"
-          else
-            curl --header "Authorization: Bearer $GITHUB_TOKEN" \
-              --upload-file ${ZIPFILE} \
-              "https://uploads.github.com/repos/${{ github.repository }}/releases/$VERSION/assets?name=${{ github.event.repository.name }}-latest.zip"
-          fi
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v3
+        with:
+            name: chirpstack-api-${{ github.event.repository.name }}-${{ github.event_name == 'push' && github.ref_type != 'tag' && 'latest' || 'stable' }}
+            path: Chirpstack-API-*.zip
 
-  commit:
-    name: Commit Version Changes
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v3
 
-      - name: Configure Git
-        run: |
-          git config --global user.email "ci-bot@ao-inc.com"
-          git config --global user.name "ci-bot"
+#   commit:
+#     name: Commit Version Changes
+#     needs: build
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: Checkout Code
+#         uses: actions/checkout@v3
 
-      - name: Commit Changes
-        run: |
-          git add version
-          git commit -m "CI updated version [skip ci]"
-          git push origin HEAD
+#       - name: Configure Git
+#         run: |
+#           git config --global user.email "ci-bot@ao-inc.com"
+#           git config --global user.name "ci-bot"
+
+#       - name: Commit Changes
+#         env:
+#             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#             TAG: ${{ steps.tag.outputs.tag }}
+#             BUMP_TYPE: ${{ steps.bump_type.outputs.bump_type }}
+#         run: |
+#             echo "Committing new version to git"
+#             echo "TAG=$TAG"
+#             echo "BUMP_TYPE=$BUMP_TYPE"
+#             git config --global user.email "ci-bot@ao-inc.com"
+#             git config --global user.name "ci-bot"
+#             git fetch origin
+#             git branch -D ${{ github.ref_name }} || true
+#             git checkout -b ${{ github.ref_name }} origin/${{ github.ref_name }}
+#             git add version
+#             git commit -m "CI updated version [skip ci]"
+#             git remote set-url origin https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git
+#             git push origin ${{ github.ref_name }}
+
