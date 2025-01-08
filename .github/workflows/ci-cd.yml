@@ -1,0 +1,99 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - 'main'
+
+jobs:
+  version:
+    name: Version Bump
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Determine Version
+        run: |
+          VERSION=$(cat version)
+          if [[ $GITHUB_REF_TYPE == "tag" ]]; then
+            echo "TAG=${GITHUB_REF_NAME}" >> build.env
+            BUMP_TYPE=major
+          elif [[ $GITHUB_REF_NAME == $DEFAULT_BRANCH ]]; then
+            echo "TAG=latest" >> build.env
+            BUMP_TYPE=minor
+          else
+            echo "TAG=${GITHUB_REF_NAME}" >> build.env
+            BUMP_TYPE=patch
+          fi
+          echo "BUMP_TYPE=$BUMP_TYPE" >> build.env
+          python3 -m semver bump $BUMP_TYPE $VERSION > version
+      - name: Save Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: version
+          path: version
+
+  build:
+    name: Build and Package
+    needs: version
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Download Version Artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: version
+
+      - name: Setup Dependencies
+        run: |
+          sudo apt-get update && sudo apt-get install -y make protobuf-compiler curl zip
+          pip install -r requirements.txt
+
+      - name: Build Project
+        run: |
+          VERSION=$(cat version)
+          echo "Building version $VERSION"
+          sed -i 's/version = "[^"]*"/version = "'$VERSION'"/' pyproject.toml
+          python generate.py
+          ZIPFILE=${{ github.event.repository.name }}-$VERSION.zip
+          ls -la
+          zip -r ${ZIPFILE} chirpstack_api
+          poetry build
+          ls -la
+
+      - name: Upload to GitHub Packages
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          VERSION=$(cat version)
+          ZIPFILE=${{ github.event.repository.name }}-$VERSION.zip
+          if [[ $GITHUB_REF_TYPE == "tag" ]]; then
+            curl --header "Authorization: Bearer $GITHUB_TOKEN" \
+              --upload-file ${ZIPFILE} \
+              "https://uploads.github.com/repos/${{ github.repository }}/releases/$VERSION/assets?name=${{ github.event.repository.name }}-stable.zip"
+          else
+            curl --header "Authorization: Bearer $GITHUB_TOKEN" \
+              --upload-file ${ZIPFILE} \
+              "https://uploads.github.com/repos/${{ github.repository }}/releases/$VERSION/assets?name=${{ github.event.repository.name }}-latest.zip"
+
+  commit:
+    name: Commit Version Changes
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Configure Git
+        run: |
+          git config --global user.email "ci-bot@ao-inc.com"
+          git config --global user.name "ci-bot"
+
+      - name: Commit Changes
+        run: |
+          git add version
+          git commit -m "CI updated version [skip ci]"
+          git push origin HEAD
