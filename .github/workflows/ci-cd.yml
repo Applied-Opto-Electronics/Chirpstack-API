@@ -82,6 +82,7 @@ jobs:
             curl --header "Authorization: Bearer $GITHUB_TOKEN" \
               --upload-file ${ZIPFILE} \
               "https://uploads.github.com/repos/${{ github.repository }}/releases/$VERSION/assets?name=${{ github.event.repository.name }}-latest.zip"
+          fi
 
   commit:
     name: Commit Version Changes
