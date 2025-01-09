@@ -81,7 +81,7 @@ jobs:
           curl -u ${{ github.actor }}:${{ secrets.PAT_GITHUB_TOKEN }} \
             -X PUT \
             -H "Content-Type: application/gzip" \
-            --data-binary @Chirpstack-API-$VERSION.tar.gz \
+            --data-binary @Chirpstack-API-*.tar.gz \
             https://ghcr.io/v2/${{ github.repository }}/chirpstack-api/blobs/uploads/
 
 #   commit:
