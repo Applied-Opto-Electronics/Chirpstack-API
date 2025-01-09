@@ -70,13 +70,19 @@ jobs:
             poetry build
             ls -la
 
-      - name: Upload Artifact
-        uses: actions/upload-artifact@v3
-        with:
-            name: ${{ github.event.repository.name }}-${{ github.event.repository.name }}-${{ github.event_name == 'push' && github.ref_type != 'tag' && 'latest' || 'stable' }}
-            path: ${{ github.event.repository.name }}-*.tar.gz
+      # - name: Upload Artifact
+      #   uses: actions/upload-artifact@v3
+      #   with:
+      #       name: ${{ github.event.repository.name }}-${{ github.event.repository.name }}-${{ github.event_name == 'push' && github.ref_type != 'tag' && 'latest' || 'stable' }}
+      #       path: ${{ github.event.repository.name }}-*.tar.gz
 
-
+      - name: Upload tar.gz
+        run: |
+          curl -u ${{ github.actor }}:${{ secrets.PAT_GITHUB_TOKEN }} \
+            -X PUT \
+            -H "Content-Type: application/gzip" \
+            --data-binary @Chirpstack-API-$VERSION.tar.gz \
+            https://ghcr.io/v2/${{ github.repository }}/chirpstack-api/blobs/uploads/
 
 #   commit:
 #     name: Commit Version Changes
